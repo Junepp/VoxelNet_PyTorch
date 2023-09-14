@@ -3,9 +3,7 @@ import sys
 import time
 import shutil
 import argparse
-
 import cv2
-cv2.setNumThreads(0)
 
 import torch
 import torch.nn as nn
@@ -13,15 +11,11 @@ import torch.optim as optim
 from torch.utils.data import DataLoader as DataLoader
 from torch.nn.utils import clip_grad_norm_
 
-from tensorboardX import SummaryWriter
-
 from config import cfg
 from utils.utils import box3d_to_label
 from model.model import RPN3D
 from loader.kitti import KITTI as Dataset
 from loader.kitti import collate_fn
-
-import pdb
 
 
 parser = argparse.ArgumentParser(description = 'training')
@@ -98,9 +92,6 @@ def run():
     # Init file log
     log = open(os.path.join(args.log_root, args.log_name), 'a')
 
-    # Init TensorBoardX writer
-    summary_writer = SummaryWriter(log_dir)
-
     # train and validate
     tot_epoch = start_epoch
     for epoch in range(start_epoch, args.max_epoch):
@@ -153,11 +144,6 @@ def run():
             # Summarize training info
             if counter % args.summary_interval == 0:
                 print("summary_interval now")
-                summary_writer.add_scalars(str(epoch + 1), {'train/loss' : loss.item(),
-                                                            'train/reg_loss' : reg_loss.item(),
-                                                            'train/cls_loss' : cls_loss.item(),
-                                                            'train/cls_pos_loss' : cls_pos_loss_rec.item(),
-                                                            'train/cls_neg_loss' : cls_neg_loss_rec.item()}, global_counter)
 
             # Summarize validation info
             if counter % args.summary_val_interval == 0:
@@ -171,19 +157,13 @@ def run():
                     # Forward pass for validation and prediction
                     probs, deltas, val_loss, val_cls_loss, val_reg_loss, cls_pos_loss_rec, cls_neg_loss_rec = model(val_data)
 
-                    summary_writer.add_scalars(str(epoch + 1), {'validate/loss': loss.item(),
-                                                                'validate/reg_loss': reg_loss.item(),
-                                                                'validate/cls_loss': cls_loss.item(),
-                                                                'validate/cls_pos_loss': cls_pos_loss_rec.item(),
-                                                                'validate/cls_neg_loss': cls_neg_loss_rec.item()}, global_counter)
-
                     try:
                         # Prediction
                         tags, ret_box3d_scores, ret_summary = model.module.predict(val_data, probs, deltas, summary = True)
 
                         for (tag, img) in ret_summary:
                             img = img[0].transpose(2, 0, 1)
-                            summary_writer.add_image(tag, img, global_counter)
+
                     except:
                         raise Exception('Prediction skipped due to an error!')
 
@@ -254,9 +234,6 @@ def run():
         tot_epoch = epoch + 1
 
     print('Train done with total epoch:{}, iter:{}'.format(tot_epoch, global_counter))
-
-    # Close TensorBoardX writer
-    summary_writer.close()
 
 
 def save_checkpoint(state, is_best, filename = 'to_be_determined.pth.tar'):

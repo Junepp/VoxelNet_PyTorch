@@ -10,8 +10,6 @@
 # ref: https://gist.github.com/jimfleming/c1adfdb0f526465c99409cc143dea97b
 
 import cv2
-cv2.setNumThreads(0)
-
 import numpy as np
 
 

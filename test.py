@@ -2,8 +2,6 @@ import os
 import argparse
 
 import cv2
-cv2.setNumThreads(0)
-
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader as DataLoader
@@ -15,14 +13,12 @@ from model.model import RPN3D
 from loader.kitti import KITTI as Dataset
 
 
-parser = argparse.ArgumentParser(description = 'training')
+parser = argparse.ArgumentParser(description='training')
 
 parser.add_argument('--tag', type = str, default = 'default', help = 'log tag')
 parser.add_argument('--output_path', type = str, default = './preds', help = 'results output dir')
 parser.add_argument('--vis', type = bool, default = True, help = 'set to True if dumping visualization')
-
 parser.add_argument('--batch_size', type = int, default = 2, help = 'batch size')
-
 parser.add_argument('--resumed_model', type = str, default = '', help = 'if specified, load the specified model')
 
 

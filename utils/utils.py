@@ -2,15 +2,11 @@
 # -*- cooing:UTF-8 -*-
 
 import cv2
-cv2.setNumThreads(0)
-
 import math
+import numpy as np
 
 from config import cfg
-from utils.box_overlaps import *
-
-import pdb
-
+from box_overlaps import bbox_overlaps
 
 #Util function to load calib matrices
 CAM = 2
@@ -400,30 +396,25 @@ def draw_lidar_box3d_on_image(img, boxes3d, scores, gt_boxes3d = np.array([]), c
     for qs in projections:
         for k in range(0, 4):
             i, j = k, (k + 1) % 4
-            cv2.line(img, (qs[i, 0], qs[i, 1]), (qs[j, 0],
-                                                 qs[j, 1]), color, thickness, cv2.LINE_AA)
+            cv2.line(img, (int(qs[i, 0]), int(qs[i, 1])), (int(qs[j, 0]), int(qs[j, 1])), color, thickness, cv2.LINE_AA)
 
             i, j = k + 4, (k + 1) % 4 + 4
-            cv2.line(img, (qs[i, 0], qs[i, 1]), (qs[j, 0],
-                                                 qs[j, 1]), color, thickness, cv2.LINE_AA)
+            cv2.line(img, (int(qs[i, 0]), int(qs[i, 1])), (int(qs[j, 0]), int(qs[j, 1])), color, thickness, cv2.LINE_AA)
 
             i, j = k, k + 4
-            cv2.line(img, (qs[i, 0], qs[i, 1]), (qs[j, 0],
-                                                 qs[j, 1]), color, thickness, cv2.LINE_AA)
+            cv2.line(img, (int(qs[i, 0]), int(qs[i, 1])), (int(qs[j, 0]), int(qs[j, 1])), color, thickness, cv2.LINE_AA)
+
     # Draw gt projections
     for qs in gt_projections:
         for k in range(0, 4):
             i, j = k, (k + 1) % 4
-            cv2.line(img, (qs[i, 0], qs[i, 1]), (qs[j, 0],
-                                                 qs[j, 1]), gt_color, thickness, cv2.LINE_AA)
+            cv2.line(img, (int(qs[i, 0]), int(qs[i, 1])), (int(qs[j, 0]), int(qs[j, 1])), gt_color, thickness, cv2.LINE_AA)
 
             i, j = k + 4, (k + 1) % 4 + 4
-            cv2.line(img, (qs[i, 0], qs[i, 1]), (qs[j, 0],
-                                                 qs[j, 1]), gt_color, thickness, cv2.LINE_AA)
+            cv2.line(img, (int(qs[i, 0]), int(qs[i, 1])), (int(qs[j, 0]), int(qs[j, 1])), gt_color, thickness, cv2.LINE_AA)
 
             i, j = k, k + 4
-            cv2.line(img, (qs[i, 0], qs[i, 1]), (qs[j, 0],
-                                                 qs[j, 1]), gt_color, thickness, cv2.LINE_AA)
+            cv2.line(img, (int(qs[i, 0]), int(qs[i, 1])), (int(qs[j, 0]), int(qs[j, 1])), gt_color, thickness, cv2.LINE_AA)
 
     return cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_BGR2RGB)
     

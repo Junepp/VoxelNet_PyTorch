@@ -17,7 +17,7 @@ small_addon_for_BCE = 1e-6
 
 
 class RPN3D(nn.Module):
-    def __init__(self, cls = 'Car', alpha = 1.5, beta = 1, sigma = 3):
+    def __init__(self, cls= 'Car', alpha = 1.5, beta = 1, sigma = 3):
         super(RPN3D, self).__init__()
 
         self.cls = cls
@@ -90,9 +90,7 @@ class RPN3D(nn.Module):
         '''
         tag = data[0]
         label = data[1]
-        vox_feature = data[2]
-        vox_number = data[3]
-        vox_coordinate = data[4]
+
         img = data[5]
         lidar = data[6]
 
@@ -108,7 +106,7 @@ class RPN3D(nn.Module):
         deltas = deltas.cpu().detach().numpy()
 
         # BOTTLENECK
-        batch_boxes3d = delta_to_boxes3d(deltas, self.anchors, coordinate = 'lidar')
+        batch_boxes3d = delta_to_boxes3d(deltas, self.anchors, coordinate='lidar')
         batch_boxes2d = batch_boxes3d[:, :, [0, 1, 4, 5, 6]]
         batch_probs = probs.reshape((batch_size, -1))
 
@@ -170,12 +168,12 @@ class RPN3D(nn.Module):
                 P, Tr, R = load_calib(os.path.join(cfg.CALIB_DIR, cur_tag + '.txt'))
 
                 front_image = draw_lidar_box3d_on_image(img[i], ret_box3d[i], ret_score[i],
-                                                        batch_gt_boxes3d[i], P2 = P, T_VELO_2_CAM = Tr, R_RECT_0 = R)
+                                                        batch_gt_boxes3d[i], P2=P, T_VELO_2_CAM=Tr, R_RECT_0=R)
 
-                bird_view = lidar_to_bird_view_img(lidar[i], factor = cfg.BV_LOG_FACTOR)
+                bird_view = lidar_to_bird_view_img(lidar[i], factor=cfg.BV_LOG_FACTOR)
 
                 bird_view = draw_lidar_box3d_on_birdview(bird_view, ret_box3d[i], ret_score[i], batch_gt_boxes3d[i],
-                                                         factor = cfg.BV_LOG_FACTOR, P2 = P, T_VELO_2_CAM = Tr, R_RECT_0 = R)
+                                                         factor=cfg.BV_LOG_FACTOR, P2=P, T_VELO_2_CAM=Tr, R_RECT_0=R)
 
                 heatmap = colorize(probs[i, ...], cfg.BV_LOG_FACTOR)
 

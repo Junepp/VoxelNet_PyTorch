@@ -1,13 +1,13 @@
 import numpy as np
 from scipy.misc import imread
 
-import pdb
 
 CAM = 2
 
+
 def load_velodyne_points(filename):
     # Load data points
-    points = np.fromfile(filename, dtype = np.float32).reshape(-1, 4)   # (N, 4); N is around 10k, 4 means [x, y, z, r]
+    points = np.fromfile(filename, dtype=np.float32).reshape(-1, 4)   # (N, 4); N is around 10k, 4 means [x, y, z, r]
 
     return points
 
@@ -82,7 +82,8 @@ def align_img_and_pc(img_dir, pc_dir, calib_dir):
     for i in range(pts2d_normed.shape[1]):
         c = int(np.round(pts2d_normed[0,i]))
         r = int(np.round(pts2d_normed[1,i]))
-        if c < cols and r < rows and r > 0 and c > 0:
+
+        if 0 < c < cols and 0 < r < rows:
             color = img[r, c, :]
             point = [pts3d[0, i], pts3d[1, i], pts3d[2, i], reflectances[i], color[0], color[1], color[2], pts2d_normed[0, i], pts2d_normed[1, i]]
             points.append(point)
@@ -109,8 +110,3 @@ if __name__ == '__main__':
         output_name = PC_ROOT + str(frame) + '.bin'
         points[:,:4].astype('float32').tofile(output_name)
         print(output_name)
-
-
-
-
-

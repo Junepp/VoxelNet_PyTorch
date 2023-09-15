@@ -15,8 +15,8 @@ __C = edict()
 cfg = __C
 
 # For dataset dir
-__C.DATA_DIR = './data/MD_KITTI'
-__C.CALIB_DIR = './data/KITTI/calib/training/calib'
+__C.DATA_DIR = '/mnt/hdd_2T/ryan/dataset'
+__C.CALIB_DIR = '/mnt/hdd_2T/ryan/dataset/training/calib'
 
 
 # For gpu allocation

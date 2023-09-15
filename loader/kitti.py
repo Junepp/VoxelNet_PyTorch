@@ -3,7 +3,6 @@ import glob
 import numpy as np
 
 import cv2
-cv2.setNumThreads(0)
 
 import torch
 import torch.utils.data as data_utl
@@ -11,8 +10,6 @@ import torch.utils.data as data_utl
 from config import cfg
 from utils.data_aug import aug_data
 from utils.preprocess import process_pointcloud
-
-import pdb
 
 
 class Processor:
@@ -31,7 +28,7 @@ class Processor:
             ret = aug_data(self.data_tag[load_index], self.data_dir)
         else:
             rgb = cv2.resize(cv2.imread(self.f_rgb[load_index]), (cfg.IMAGE_WIDTH, cfg.IMAGE_HEIGHT))
-            raw_lidar = np.fromfile(self.f_lidar[load_index], dtype = np.float32).reshape((-1, 4))
+            raw_lidar = np.fromfile(self.f_lidar[load_index], dtype=np.float32).reshape((-1, 4))
             if not self.is_testset:
                 labels = [line for line in open(self.f_label[load_index], 'r').readlines()]
             else:
@@ -95,12 +92,12 @@ def collate_fn(rets):
 
     res = (
         np.array(tag),
-        np.array(labels),
+        np.array(labels, dtype=object),
         [torch.from_numpy(x) for x in vox_feature],
-        np.array(vox_number),
+        np.array(vox_number, dtype=object),
         [torch.from_numpy(x) for x in vox_coordinate],
         np.array(rgb),
-        np.array(raw_lidar)
+        np.array(raw_lidar, dtype=object)
     )
 
     return res
@@ -116,7 +113,7 @@ def build_input(voxel_dict_list):
         feature_list.append(voxel_dict['feature_buffer'])   # (K, T, 7); K is max number of non-empty voxels; T = 35
         number_list.append(voxel_dict['number_buffer'])     # (K,)
         coordinate = voxel_dict['coordinate_buffer']        # (K, 3)
-        coordinate_list.append(np.pad(coordinate, ((0, 0), (1, 0)), mode = 'constant', constant_values = i))
+        coordinate_list.append(np.pad(coordinate, ((0, 0), (1, 0)), mode='constant', constant_values=i))
 
     # feature = np.concatenate(feature_list)
     # number = np.concatenate(number_list)

@@ -11,8 +11,6 @@ import os
 from utils.utils import *
 from utils.preprocess import *
 
-import pdb
-
 
 def aug_data(tag, object_dir):
     np.random.seed()

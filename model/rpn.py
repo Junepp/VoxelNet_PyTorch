@@ -127,7 +127,7 @@ class MiddleAndRPN(nn.Module):
         inputs = inputs.permute(0, 4, 1, 2, 3)  # (B, D, H, W, C) -> (B, C, D, H, W)
 
         temp_conv = self.middle_layer(inputs)   # [batch, 64, 2, 400, 352]
-        temp_conv = temp_conv.view(batch_size, -1, HEIGHT, WIDTH)   # [batch, 128, 400, 352]
+        temp_conv = temp_conv.reshape(batch_size, -1, HEIGHT, WIDTH)   # [batch, 128, 400, 352]
 
         temp_conv = self.block1(temp_conv)      # [batch, 128, 200, 176]
         temp_deconv1 = self.deconv1(temp_conv)
